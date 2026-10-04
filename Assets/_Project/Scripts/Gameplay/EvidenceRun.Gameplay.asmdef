@@ -1,0 +1,16 @@
+{
+    "name": "EvidenceRun.Gameplay",
+    "rootNamespace": "",
+    "references": [
+        "GUID:521c6eeb79feb7c4395cab6450e316df"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

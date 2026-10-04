@@ -1,0 +1,18 @@
+{
+    "name": "EvidenceRun.Bootstrap",
+    "rootNamespace": "",
+    "references": [
+        "GUID:521c6eeb79feb7c4395cab6450e316df",
+        "GUID:f2756afd36358664d81336defc1cdd15",
+        "GUID:bef51405af44c724e98108e0528d41d6"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

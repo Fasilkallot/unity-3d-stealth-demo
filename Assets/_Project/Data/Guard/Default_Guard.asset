@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43f925257dd8eb94aade5e632f6f4cf1, type: 3}
+  m_Name: Default_Guard
+  m_EditorClassIdentifier: EvidenceRun.Gameplay::EvidenceRun.Gameplay.Guards.GuardConfig
+  visionRange: 10
+  fieldOfView: 90
+  cosHalfFov: 0

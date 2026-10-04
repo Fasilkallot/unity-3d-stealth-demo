@@ -1,0 +1,17 @@
+{
+    "name": "EvidenceRun.Presentation",
+    "rootNamespace": "",
+    "references": [
+        "GUID:521c6eeb79feb7c4395cab6450e316df",
+        "GUID:f2756afd36358664d81336defc1cdd15"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -492,11 +492,7 @@ Assets/_Project/
 
 ### WebGL Build
 
-`<LIVE_WEBGL_LINK>`
-
-### GitHub Repository
-
-`<GITHUB_REPOSITORY_LINK>`
+`<[LIVE_WEBGL_LINK](https://play.unity.com/en/games/a0be4d2a-6248-4f84-be08-2657ad724b1e/evidence-run)>`
 
 ## Final Note
 

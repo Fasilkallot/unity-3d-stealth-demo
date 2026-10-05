@@ -58,6 +58,9 @@ namespace EvidenceRun.Gameplay.Guards
 
         private GameEvents _gameEvents;
 
+        private ActorIntent _currentIntent;
+
+        public ActorIntent CurrentIntent => _currentIntent;
         private void Awake()
         {
             if (guardConfig == null)
@@ -219,17 +222,19 @@ namespace EvidenceRun.Gameplay.Guards
                         currentState));
             }
 
-            ActorIntent intent = new ActorIntent
+            _currentIntent = new ActorIntent
             {
                 Move = new Vector2(
                     _context.Mover.MoveDirection.x,
                     _context.Mover.MoveDirection.z),
 
                 AimPoint = transform.position +
-                           _context.Mover.MoveDirection * 10f
+                _context.Mover.MoveDirection * 10f,
+
+                Run = _stateMachine.Current == (int)GuardStateId.Chase
             };
 
-            actorMotor.SetIntent(intent);
+            actorMotor.SetIntent(_currentIntent);
         }
     }
 }

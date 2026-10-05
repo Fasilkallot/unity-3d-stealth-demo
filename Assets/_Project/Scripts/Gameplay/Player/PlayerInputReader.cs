@@ -9,7 +9,6 @@ namespace EvidenceRun.Gameplay.Player
         [SerializeField] private Camera playerCamera;
 
         private ActorIntent _intent;
-
         public ActorIntent Intent => _intent;
 
         private void Awake()

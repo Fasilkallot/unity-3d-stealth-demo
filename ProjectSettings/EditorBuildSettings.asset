@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/LowPolyShooterPack/Scenes/Demo Scene.unity
-    guid: aeeeaf2e14d67964b8c8da5e4980c0d8
+    path: Assets/_Project/Scenes/MainMenu.unity
+    guid: af5c13dc963274740b1f5ddc318ef325
+  - enabled: 1
+    path: Assets/_Project/Scenes/EvidenceRun.unity
+    guid: b40c1ff10591ac147b60173217128999
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 289c1b55c9541489481df5cc06664110, type: 3}
   m_UseUCBPForAssetBundles: 0

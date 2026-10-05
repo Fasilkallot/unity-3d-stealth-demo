@@ -1,6 +1,7 @@
 using EvidenceRun.Core;
 using EvidenceRun.Gameplay.Guards;
 using EvidenceRun.Gameplay.Session;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ namespace EvidenceRun.Presentation.HUD
     public sealed class GameHUD : MonoBehaviour
     {
         [Header("Objective")]
-        [SerializeField] private Text objectiveText;
+        [SerializeField] private TextMeshProUGUI objectiveText;
 
         [Header("Panels")]
         [SerializeField] private GameObject winPanel;

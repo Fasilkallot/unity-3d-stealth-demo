@@ -1,5 +1,6 @@
 using EvidenceRun.Gameplay.Guards;
 using EvidenceRun.Gameplay.Projectiles;
+using EvidenceRun.Presentation.Effects;
 using UnityEngine;
 
 namespace EvidenceRun.Bootstrap
@@ -8,13 +9,16 @@ namespace EvidenceRun.Bootstrap
     {
         private GuardSystem _guardSystem;
         private ProjectileSystem _projectileSystem;
+        private ImpactEffectSystem _impactEffectSystem;
 
         public void Initialize(
             Guard[] guards,
-            ProjectileSystem projectileSystem)
+            ProjectileSystem projectileSystem,
+            ImpactEffectSystem impactEffectSystem)
         {
             _guardSystem = new GuardSystem(guards);
             _projectileSystem = projectileSystem;
+            _impactEffectSystem = impactEffectSystem;
         }
 
         private void Update()
@@ -24,6 +28,10 @@ namespace EvidenceRun.Bootstrap
             _projectileSystem?.Tick(
                 Time.deltaTime,
                 Physics.AllLayers);
+        }
+        private void LateUpdate()
+        {
+            _impactEffectSystem?.Tick();
         }
     }
 }

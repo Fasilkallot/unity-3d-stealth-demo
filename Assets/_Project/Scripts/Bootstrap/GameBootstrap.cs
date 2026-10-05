@@ -1,10 +1,10 @@
 using EvidenceRun.Core;
 using EvidenceRun.Gameplay.Combat;
 using EvidenceRun.Gameplay.Guards;
-using EvidenceRun.Gameplay.Noise;
 using EvidenceRun.Gameplay.Player;
 using EvidenceRun.Gameplay.Pooling;
 using EvidenceRun.Gameplay.Projectiles;
+using EvidenceRun.Presentation.Effects;
 using UnityEngine;
 
 namespace EvidenceRun.Bootstrap
@@ -23,6 +23,13 @@ namespace EvidenceRun.Bootstrap
         [SerializeField] private PlayerController playerController;
         [SerializeField] private ThrowableConfig throwableConfig;
 
+        [Header("Impact Effects")]
+        [SerializeField] private PooledImpactEffect impactEffectPrefab;
+        [SerializeField] private Transform impactEffectPoolRoot;
+
+        private ObjectPool<PooledImpactEffect> _impactEffectPool;
+        private ImpactEffectSystem _impactEffectSystem;
+
         private GameEvents _gameEvents;
         private NoiseBus _noiseBus;
         private ObjectPool<PooledProjectile> _projectilePool;
@@ -40,11 +47,13 @@ namespace EvidenceRun.Bootstrap
             InitializeNoiseBus();
             InitializeGuards();
             InitializeProjectilePool();
+            InitializeImpactEffectSystem();
             InitializePlayerWeapon();
 
             gameLoop.Initialize(
                 guards,
-                _projectileSystem);
+                _projectileSystem,
+                _impactEffectSystem);
         }
 
         private void InitializeNoiseBus()
@@ -153,7 +162,8 @@ namespace EvidenceRun.Bootstrap
             _projectileSystem = new ProjectileSystem(
                 _projectilePool,
                 poolConfig.ProjectileCapacity,
-                _noiseBus);
+                _noiseBus,
+                _gameEvents);
         }
 
         private PooledProjectile CreateProjectile()
@@ -167,5 +177,51 @@ namespace EvidenceRun.Bootstrap
 
             return projectile;
         }
+        private void InitializeImpactEffectSystem()
+        {
+            if (impactEffectPrefab == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires an impact effect prefab.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            if (impactEffectPoolRoot == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires an impact effect pool root.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            _impactEffectPool =
+                new ObjectPool<PooledImpactEffect>(
+                    CreateImpactEffect,
+                    poolConfig.RippleCapacity);
+
+            _impactEffectSystem =
+                new ImpactEffectSystem(
+                    _impactEffectPool,
+                    poolConfig.RippleCapacity);
+            _gameEvents.ProjectileImpact +=
+                _impactEffectSystem.OnProjectileImpact;
+        }
+        private PooledImpactEffect CreateImpactEffect()
+        {
+            PooledImpactEffect effect =
+                Instantiate(
+                    impactEffectPrefab,
+                    impactEffectPoolRoot);
+
+            effect.gameObject.SetActive(false);
+
+            return effect;
+        }
+
     }
 }

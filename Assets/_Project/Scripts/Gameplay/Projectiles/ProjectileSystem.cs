@@ -8,6 +8,7 @@ namespace EvidenceRun.Gameplay.Projectiles
         private readonly ObjectPool<PooledProjectile> _pool;
         private readonly PooledProjectile[] _activeProjectiles;
         private readonly NoiseBus _noiseBus;
+        private readonly GameEvents _gameEvents;
 
         private int _activeCount;
 
@@ -15,12 +16,15 @@ namespace EvidenceRun.Gameplay.Projectiles
 
 
         public ProjectileSystem(
-             ObjectPool<PooledProjectile> pool,
-             int capacity,
-             NoiseBus noiseBus)
+            ObjectPool<PooledProjectile> pool,
+            int capacity,
+            NoiseBus noiseBus,
+            GameEvents gameEvents)
         {
             _pool = pool;
             _noiseBus = noiseBus;
+            _gameEvents = gameEvents;
+
 
             _activeProjectiles =
                 new PooledProjectile[capacity];
@@ -107,6 +111,12 @@ namespace EvidenceRun.Gameplay.Projectiles
                             projectile.Source);
 
                         _noiseBus.Emit(in noiseEvent);
+
+                        ProjectileImpactEvent impactEvent =
+                            new ProjectileImpactEvent(hit.point);
+
+                        _gameEvents.PublishProjectileImpact(
+                            in impactEvent);
 
                         RemoveProjectileAt(i);
                         continue;

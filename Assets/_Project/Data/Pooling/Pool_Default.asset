@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Pool_Default
   m_EditorClassIdentifier: EvidenceRun.Gameplay::EvidenceRun.Gameplay.Pooling.PoolConfig
   projectileCapacity: 10
-  rippleCapacity: 10
+  rippleCapacity: 5

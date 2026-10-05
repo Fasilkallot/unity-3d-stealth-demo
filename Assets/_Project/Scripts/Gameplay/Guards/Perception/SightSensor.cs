@@ -16,6 +16,7 @@ namespace EvidenceRun.Gameplay.Guards.Perception
         private SightResult _lastResult;
 
         public SightResult LastResult => _lastResult;
+        public float EyeHeight => eyeHeight;
 
         private GuardConfig _guardConfig;
         private Transform _target;

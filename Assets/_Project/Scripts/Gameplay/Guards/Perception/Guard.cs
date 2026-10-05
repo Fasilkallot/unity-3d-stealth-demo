@@ -49,6 +49,15 @@ namespace EvidenceRun.Gameplay.Guards
 
         private StateMachine<GuardContext> _stateMachine;
 
+        public GuardConfig Config => guardConfig;
+
+        public float AwarenessValue =>
+            _context != null ? _context.Awareness.Value : 0f;
+
+        public Perception.SightSensor SightSensor => sightSensor;
+
+        private GameEvents _gameEvents;
+
         private void Awake()
         {
             if (guardConfig == null)
@@ -148,6 +157,20 @@ namespace EvidenceRun.Gameplay.Guards
             actorMotor.Initialize(
                 guardConfig);
         }
+        public void Initialize(GameEvents gameEvents)
+        {
+            if (gameEvents == null)
+            {
+                Debug.LogError(
+                    $"{nameof(Guard)} requires GameEvents.",
+                    this);
+
+                return;
+            }
+
+            _gameEvents = gameEvents;
+            _context.SetEvents(gameEvents);
+        }
 
         public void Tick(float deltaTime)
         {
@@ -155,7 +178,22 @@ namespace EvidenceRun.Gameplay.Guards
 
             guardPerception.Tick(deltaTime);
 
-            _stateMachine.Tick(_context, deltaTime);
+            int previousState = _stateMachine.Current;
+
+            _stateMachine.Tick(
+                _context,
+                deltaTime);
+
+            int currentState = _stateMachine.Current;
+
+            if (previousState >= 0 &&
+                currentState != previousState)
+            {
+                _context.Events.PublishGuardStateChanged(
+                    new GuardStateChangedEvent(
+                        previousState,
+                        currentState));
+            }
 
             ActorIntent intent = new ActorIntent
             {

@@ -6,10 +6,12 @@ namespace EvidenceRun.Gameplay.Guards.States
 {
     public sealed class ChaseState : IState<GuardContext>
     {
+        private bool _playerCaught;
         public void Enter(
             GuardContext context,
             IStateRequester stateRequester)
         {
+            _playerCaught = false;
             context.ResetStateTimer();
         }
 
@@ -29,8 +31,11 @@ namespace EvidenceRun.Gameplay.Guards.States
             if (toTarget.sqrMagnitude <=
                 context.Config.CatchRadiusSqr)
             {
-                stateRequester.Request(
-                    (int)GuardStateId.Caught);
+                if (!_playerCaught)
+                {
+                    _playerCaught = true;
+                    context.Events.PublishPlayerCaught();
+                }
 
                 return;
             }

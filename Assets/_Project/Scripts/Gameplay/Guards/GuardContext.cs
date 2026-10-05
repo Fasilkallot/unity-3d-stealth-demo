@@ -20,6 +20,7 @@ namespace EvidenceRun.Gameplay.Guards
         public Vector3 Position { get; private set; }
         public SightResult LastSightResult { get; private set; }
 
+        public GameEvents Events { get; private set; }
 
         public GuardContext(
             GuardConfig config,
@@ -43,6 +44,10 @@ namespace EvidenceRun.Gameplay.Guards
             Position = position;
         }
 
+        public void SetEvents(GameEvents events)
+        {
+            Events = events;
+        }
         public void SetSightResult(SightResult result)
         {
             LastSightResult = result;

@@ -7,6 +7,7 @@ namespace EvidenceRun.Core
         public event Action<PlayerCaughtEvent> PlayerCaught;
         public event Action<GuardStateChangedEvent> GuardStateChanged;
         public event Action<ProjectileImpactEvent> ProjectileImpact;
+        public event Action<EvidencePickedEvent> EvidencePicked;
 
         public void PublishPlayerCaught()
         {
@@ -21,6 +22,10 @@ namespace EvidenceRun.Core
         public void PublishProjectileImpact(in ProjectileImpactEvent eventData)
         {
             ProjectileImpact?.Invoke(eventData);
+        }
+        public void PublishEvidencePicked()
+        {
+            EvidencePicked?.Invoke(new EvidencePickedEvent());
         }
     }
 }

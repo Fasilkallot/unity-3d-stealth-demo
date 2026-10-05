@@ -4,7 +4,9 @@ using EvidenceRun.Gameplay.Guards;
 using EvidenceRun.Gameplay.Player;
 using EvidenceRun.Gameplay.Pooling;
 using EvidenceRun.Gameplay.Projectiles;
+using EvidenceRun.Gameplay.Session;
 using EvidenceRun.Presentation.Effects;
+using EvidenceRun.Presentation.HUD;
 using UnityEngine;
 
 namespace EvidenceRun.Bootstrap
@@ -27,6 +29,14 @@ namespace EvidenceRun.Bootstrap
         [SerializeField] private PooledImpactEffect impactEffectPrefab;
         [SerializeField] private Transform impactEffectPoolRoot;
 
+        [Header("Objectives")]
+        [SerializeField] private ObjectiveConfig objectiveConfig;
+        [SerializeField] private Transform evidenceTarget;
+        [SerializeField] private Transform extractionTarget;
+
+        [Header("Presentation")]
+        [SerializeField] private GameHUD gameHUD;
+
         private ObjectPool<PooledImpactEffect> _impactEffectPool;
         private ImpactEffectSystem _impactEffectSystem;
 
@@ -35,6 +45,8 @@ namespace EvidenceRun.Bootstrap
         private ObjectPool<PooledProjectile> _projectilePool;
         private ProjectileSystem _projectileSystem;
         private ThrowableWeapon _throwableWeapon;
+        private GameSession _gameSession;
+        private ObjectiveSystem _objectiveSystem;
 
         public NoiseBus NoiseBus => _noiseBus;
         public GameEvents GameEvents => _gameEvents;
@@ -44,18 +56,31 @@ namespace EvidenceRun.Bootstrap
         {
             _gameEvents = new GameEvents();
 
+            InitializeGameSession();
             InitializeNoiseBus();
             InitializeGuards();
             InitializeProjectilePool();
             InitializeImpactEffectSystem();
             InitializePlayerWeapon();
+            InitializeObjectiveSystem();
+            InitializeHUD();
+
+            _gameSession.Start();
 
             gameLoop.Initialize(
                 guards,
                 _projectileSystem,
-                _impactEffectSystem);
+                _impactEffectSystem,
+                _objectiveSystem,
+                playerController.transform,
+                gameHUD
+                );
         }
 
+        private void InitializeGameSession()
+        {
+            _gameSession = new GameSession(_gameEvents);
+        }
         private void InitializeNoiseBus()
         {
             if (guards == null || guards.Length == 0)
@@ -72,6 +97,20 @@ namespace EvidenceRun.Bootstrap
                 guards.Length);
         }
 
+        private void InitializeHUD()
+        {
+            if (gameHUD == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires a GameHUD.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            gameHUD.Initialize(_gameSession);
+        }
         private void InitializeGuards()
         {
             for (int i = 0; i < guards.Length; i++)
@@ -122,7 +161,45 @@ namespace EvidenceRun.Bootstrap
             playerController.Initialize(
                 _throwableWeapon);
         }
+        private void InitializeObjectiveSystem()
+        {
+            if (objectiveConfig == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires an ObjectiveConfig.",
+                    this);
 
+                enabled = false;
+                return;
+            }
+
+            if (evidenceTarget == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires an evidence target.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            if (extractionTarget == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires an extraction target.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            _objectiveSystem = new ObjectiveSystem(
+                _gameEvents,
+                _gameSession,
+                evidenceTarget.position,
+                extractionTarget.position,
+                objectiveConfig);
+        }
         private void InitializeProjectilePool()
         {
             if (poolConfig == null)

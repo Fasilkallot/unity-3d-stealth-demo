@@ -109,7 +109,7 @@ namespace EvidenceRun.Bootstrap
                 return;
             }
 
-            gameHUD.Initialize(_gameSession);
+            gameHUD.Initialize(_gameSession,_gameEvents);
         }
         private void InitializeGuards()
         {
@@ -158,8 +158,7 @@ namespace EvidenceRun.Bootstrap
                 throwableConfig,
                 _projectileSystem);
 
-            playerController.Initialize(
-                _throwableWeapon);
+            playerController.Initialize(_throwableWeapon, _gameSession);
         }
         private void InitializeObjectiveSystem()
         {

@@ -1,15 +1,16 @@
+using EvidenceRun.Core;
+using EvidenceRun.Gameplay.Guards;
 using EvidenceRun.Gameplay.Session;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
 
 namespace EvidenceRun.Presentation.HUD
 {
     public sealed class GameHUD : MonoBehaviour
     {
         [Header("Objective")]
-        [SerializeField] private TextMeshProUGUI objectiveText;
+        [SerializeField] private Text objectiveText;
 
         [Header("Panels")]
         [SerializeField] private GameObject winPanel;
@@ -19,11 +20,17 @@ namespace EvidenceRun.Presentation.HUD
         [SerializeField] private GameObject alertIndicator;
 
         private GameSession _gameSession;
+        private GameEvents _gameEvents;
 
         private GameSessionState _lastState;
         private bool _lastHasEvidence;
 
-        public void Initialize(GameSession gameSession)
+        private int _alertGuardCount;
+        private bool _alertStateDirty;
+
+        public void Initialize(
+            GameSession gameSession,
+            GameEvents gameEvents)
         {
             if (gameSession == null)
             {
@@ -34,10 +41,25 @@ namespace EvidenceRun.Presentation.HUD
                 return;
             }
 
+            if (gameEvents == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameHUD)} requires GameEvents.",
+                    this);
+
+                return;
+            }
+
             _gameSession = gameSession;
+            _gameEvents = gameEvents;
+
+            _alertGuardCount = 0;
+            _alertStateDirty = true;
 
             _lastState = GameSessionState.Boot;
             _lastHasEvidence = false;
+
+            _gameEvents.GuardStateChanged += OnGuardStateChanged;
 
             ApplyState();
         }
@@ -50,7 +72,8 @@ namespace EvidenceRun.Presentation.HUD
             }
 
             if (_gameSession.State != _lastState ||
-                _gameSession.HasEvidence != _lastHasEvidence)
+                _gameSession.HasEvidence != _lastHasEvidence ||
+                _alertStateDirty)
             {
                 ApplyState();
             }
@@ -62,6 +85,43 @@ namespace EvidenceRun.Presentation.HUD
 
             SceneManager.LoadScene(
                 activeScene.buildIndex);
+        }
+
+        private void OnGuardStateChanged(
+            GuardStateChangedEvent eventData)
+        {
+            bool wasAlert =
+                IsAlertState(eventData.PreviousStateId);
+
+            bool isAlert =
+                IsAlertState(eventData.CurrentStateId);
+
+            if (wasAlert == isAlert)
+            {
+                return;
+            }
+
+            if (isAlert)
+            {
+                _alertGuardCount++;
+            }
+            else
+            {
+                _alertGuardCount--;
+
+                if (_alertGuardCount < 0)
+                {
+                    _alertGuardCount = 0;
+                }
+            }
+
+            _alertStateDirty = true;
+        }
+
+        private static bool IsAlertState(int stateId)
+        {
+            return stateId == (int)GuardStateId.Suspicious ||
+                   stateId == (int)GuardStateId.Chase;
         }
 
         private void ApplyState()
@@ -90,17 +150,34 @@ namespace EvidenceRun.Presentation.HUD
 
             if (alertIndicator != null)
             {
-                alertIndicator.SetActive(false);
+                alertIndicator.SetActive(
+                    playing && _alertGuardCount > 0);
             }
 
-            if (objectiveText == null || !playing)
+            if (objectiveText != null)
             {
-                return;
+                if (playing)
+                {
+                    objectiveText.text = _gameSession.HasEvidence
+                        ? "Return to extraction."
+                        : "Find the evidence.";
+                }
+                else
+                {
+                    objectiveText.text = string.Empty;
+                }
             }
 
-            objectiveText.text = _gameSession.HasEvidence
-                ? "Return to extraction."
-                : "Find the evidence.";
+            _alertStateDirty = false;
+        }
+
+        private void OnDestroy()
+        {
+            if (_gameEvents != null)
+            {
+                _gameEvents.GuardStateChanged -=
+                    OnGuardStateChanged;
+            }
         }
     }
 }

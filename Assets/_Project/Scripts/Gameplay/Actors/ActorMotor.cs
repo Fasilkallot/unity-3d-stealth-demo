@@ -121,5 +121,16 @@ namespace EvidenceRun.Gameplay.Actors
                 RigidbodyConstraints.FreezeRotationX |
                 RigidbodyConstraints.FreezeRotationZ;
         }
+
+        public void Stop()
+        {
+            if (_rigidbody == null)
+            {
+                return;
+            }
+
+            _rigidbody.linearVelocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+        }
     }
 }

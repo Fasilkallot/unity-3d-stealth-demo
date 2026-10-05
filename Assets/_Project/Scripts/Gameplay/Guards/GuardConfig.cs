@@ -68,6 +68,7 @@ namespace EvidenceRun.Gameplay.Guards
         public float Acceleration => acceleration;
         public float Deceleration => deceleration;
         public float CrouchSpeedMultiplier => crouchSpeedMultiplier;
+        public float RunSpeedMultiplier => 1f;
 
         public float VisionRange => visionRange;
         public float FieldOfView => fieldOfView;

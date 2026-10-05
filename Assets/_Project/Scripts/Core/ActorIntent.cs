@@ -11,5 +11,6 @@ namespace EvidenceRun.Core
         public bool Throw;
         public bool Fire;
         public bool Interact;
+        public bool Run;
     }
 }

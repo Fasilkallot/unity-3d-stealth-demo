@@ -67,6 +67,10 @@ namespace EvidenceRun.Gameplay.Actors
             {
                 speed *= _movementConfig.CrouchSpeedMultiplier;
             }
+            else if (_intent.Run)
+            {
+                speed *= _movementConfig.RunSpeedMultiplier;
+            }
 
             Vector3 targetVelocity = desiredDirection * speed;
 

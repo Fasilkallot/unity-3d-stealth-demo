@@ -52,7 +52,7 @@ namespace EvidenceRun.Presentation.Camera
 
         private void UpdateOrbit()
         {
-            if (Input.GetMouseButton(1))
+            if (Input.GetMouseButton(0))
             {
                 _yaw += Input.GetAxis("Mouse X") * mouseSensitivity;
                 _pitch -= Input.GetAxis("Mouse Y") * mouseSensitivity;

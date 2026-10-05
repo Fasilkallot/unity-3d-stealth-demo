@@ -10,9 +10,6 @@ namespace EvidenceRun.Gameplay.Player
 
         private ActorIntent _intent;
 
-        private static readonly Plane GroundPlane =
-            new Plane(Vector3.up, Vector3.zero);
-
         public ActorIntent Intent => _intent;
 
         private void Awake()
@@ -31,6 +28,7 @@ namespace EvidenceRun.Gameplay.Player
         {
             ReadMovement();
             ReadCrouch();
+            ReadRun();
             ReadAim();
             ReadThrow();
         }
@@ -39,6 +37,7 @@ namespace EvidenceRun.Gameplay.Player
         {
             _intent.Throw = Input.GetKeyDown(KeyCode.G);
         }
+
         private void ReadMovement()
         {
             Vector2 input = new Vector2(
@@ -75,6 +74,11 @@ namespace EvidenceRun.Gameplay.Player
         private void ReadCrouch()
         {
             _intent.Crouch = Input.GetKey(KeyCode.LeftControl);
+        }
+
+        private void ReadRun()
+        {
+            _intent.Run = Input.GetKey(KeyCode.LeftShift);
         }
 
         private void ReadAim()

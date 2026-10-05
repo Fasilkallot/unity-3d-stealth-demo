@@ -7,7 +7,7 @@ using UnityEditor;
 
 namespace EvidenceRun.Gameplay.Guards
 {
-    public sealed class Guard : MonoBehaviour
+    public sealed class Guard : MonoBehaviour, INoiseListener
     {
         #if UNITY_EDITOR
 [ContextMenu("Debug/Log Awareness")]
@@ -170,6 +170,30 @@ namespace EvidenceRun.Gameplay.Guards
 
             _gameEvents = gameEvents;
             _context.SetEvents(gameEvents);
+        }
+
+        public void OnNoise(in NoiseEvent noiseEvent)
+        {
+            if (_context == null)
+            {
+                return;
+            }
+
+            Vector3 offset =
+                noiseEvent.Position - transform.position;
+
+            offset.y = 0f;
+
+            float sqrDistance = offset.sqrMagnitude;
+            float sqrRadius = noiseEvent.Radius * noiseEvent.Radius;
+
+            if (sqrDistance > sqrRadius)
+            {
+                return;
+            }
+
+            _context.SetNoisePosition(
+                noiseEvent.Position);
         }
 
         public void Tick(float deltaTime)

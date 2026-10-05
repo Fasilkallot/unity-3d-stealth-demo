@@ -10,9 +10,15 @@ namespace EvidenceRun.Gameplay.Guards.States
         {
             context.ResetStateTimer();
             context.Mover.ResumeRoute();
+
+            context.ClearNoisePosition();
+            context.ResetLastKnownPlayerPosition();
         }
 
-        public void Tick(GuardContext context, IStateRequester stateRequester, float deltaTime)
+        public void Tick(
+             GuardContext context,
+             IStateRequester stateRequester,
+             float deltaTime)
         {
             context.Mover.Tick(
                 context.Position,
@@ -21,7 +27,8 @@ namespace EvidenceRun.Gameplay.Guards.States
             context.TickStateTimer(deltaTime);
 
             if (context.Awareness.Value >=
-                context.Config.SuspiciousThreshold)
+                    context.Config.SuspiciousThreshold ||
+                context.HasNoisePosition)
             {
                 stateRequester.Request(
                     (int)GuardStateId.Suspicious);

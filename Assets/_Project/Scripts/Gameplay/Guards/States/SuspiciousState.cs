@@ -14,6 +14,16 @@ namespace EvidenceRun.Gameplay.Guards.States
             {
                 context.Mover.SetDestination(
                     context.LastKnownPlayerPosition);
+
+                return;
+            }
+
+            if (context.HasNoisePosition)
+            {
+                context.Mover.SetDestination(
+                    context.NoisePosition);
+
+                context.ClearNoisePosition();
             }
         }
 
@@ -22,6 +32,17 @@ namespace EvidenceRun.Gameplay.Guards.States
             IStateRequester stateRequester,
             float deltaTime)
         {
+            if (context.HasNoisePosition)
+            {
+                if (!context.HasLastKnownPlayerPosition)
+                {
+                    context.Mover.SetDestination(
+                        context.NoisePosition);
+                }
+
+                context.ClearNoisePosition();
+            }
+
             context.Mover.Tick(
                 context.Position,
                 deltaTime);

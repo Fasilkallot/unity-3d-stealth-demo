@@ -22,6 +22,9 @@ namespace EvidenceRun.Gameplay.Guards
 
         public GameEvents Events { get; private set; }
 
+        public Vector3 NoisePosition { get; private set; }
+        public bool HasNoisePosition { get; private set; }
+
         public GuardContext(
             GuardConfig config,
             Transform target,
@@ -37,8 +40,21 @@ namespace EvidenceRun.Gameplay.Guards
             HasLastKnownPlayerPosition = false;
 
             StateTimer = 0f;
+            NoisePosition = Vector3.zero;
+            HasNoisePosition = false;
         }
 
+        public void SetNoisePosition(Vector3 position)
+        {
+            NoisePosition = position;
+            HasNoisePosition = true;
+        }
+
+        public void ClearNoisePosition()
+        {
+            NoisePosition = Vector3.zero;
+            HasNoisePosition = false;
+        }
         public void SetPosition(Vector3 position)
         {
             Position = position;

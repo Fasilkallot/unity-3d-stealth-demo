@@ -32,8 +32,13 @@ namespace EvidenceRun.Gameplay.Player
             ReadMovement();
             ReadCrouch();
             ReadAim();
+            ReadThrow();
         }
 
+        private void ReadThrow()
+        {
+            _intent.Throw = Input.GetKeyDown(KeyCode.G);
+        }
         private void ReadMovement()
         {
             Vector2 input = new Vector2(

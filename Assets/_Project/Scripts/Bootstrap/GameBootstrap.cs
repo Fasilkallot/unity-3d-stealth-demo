@@ -1,6 +1,8 @@
 using EvidenceRun.Core;
+using EvidenceRun.Gameplay.Combat;
 using EvidenceRun.Gameplay.Guards;
 using EvidenceRun.Gameplay.Noise;
+using EvidenceRun.Gameplay.Player;
 using EvidenceRun.Gameplay.Pooling;
 using EvidenceRun.Gameplay.Projectiles;
 using UnityEngine;
@@ -18,10 +20,14 @@ namespace EvidenceRun.Bootstrap
         [SerializeField] private PooledProjectile projectilePrefab;
         [SerializeField] private Transform projectilePoolRoot;
 
+        [SerializeField] private PlayerController playerController;
+        [SerializeField] private ThrowableConfig throwableConfig;
+
         private GameEvents _gameEvents;
         private NoiseBus _noiseBus;
         private ObjectPool<PooledProjectile> _projectilePool;
         private ProjectileSystem _projectileSystem;
+        private ThrowableWeapon _throwableWeapon;
 
         public NoiseBus NoiseBus => _noiseBus;
         public GameEvents GameEvents => _gameEvents;
@@ -33,8 +39,8 @@ namespace EvidenceRun.Bootstrap
 
             InitializeNoiseBus();
             InitializeGuards();
-
             InitializeProjectilePool();
+            InitializePlayerWeapon();
 
             gameLoop.Initialize(
                 guards,
@@ -76,6 +82,36 @@ namespace EvidenceRun.Bootstrap
                 _noiseBus.Register(
                     guards[i]);
             }
+        }
+
+        private void InitializePlayerWeapon()
+        {
+            if (playerController == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires a PlayerController.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            if (throwableConfig == null)
+            {
+                Debug.LogError(
+                    $"{nameof(GameBootstrap)} requires a ThrowableConfig.",
+                    this);
+
+                enabled = false;
+                return;
+            }
+
+            _throwableWeapon = new ThrowableWeapon(
+                throwableConfig,
+                _projectileSystem);
+
+            playerController.Initialize(
+                _throwableWeapon);
         }
 
         private void InitializeProjectilePool()

@@ -51,10 +51,14 @@ namespace EvidenceRun.Bootstrap
         public NoiseBus NoiseBus => _noiseBus;
         public GameEvents GameEvents => _gameEvents;
 
-
         private void Awake()
         {
             _gameEvents = new GameEvents();
+
+        }
+
+        private void Start()
+        {
 
             InitializeGameSession();
             InitializeNoiseBus();
@@ -75,6 +79,8 @@ namespace EvidenceRun.Bootstrap
                 playerController.transform,
                 gameHUD
                 );
+            _gameEvents.EvidencePicked += OnEvidencePicked;
+
         }
 
         private void InitializeGameSession()
@@ -131,7 +137,15 @@ namespace EvidenceRun.Bootstrap
                     guards[i]);
             }
         }
+        private void OnEvidencePicked(EvidencePickedEvent eventData)
+        {
+            if (evidenceTarget == null)
+            {
+                return;
+            }
 
+            evidenceTarget.gameObject.SetActive(false);
+        }
         private void InitializePlayerWeapon()
         {
             if (playerController == null)
@@ -297,6 +311,16 @@ namespace EvidenceRun.Bootstrap
             effect.gameObject.SetActive(false);
 
             return effect;
+        }
+
+        private void OnDestroy()
+        {
+            if (_gameEvents == null)
+            {
+                return;
+            }
+
+            _gameEvents.EvidencePicked -= OnEvidencePicked;
         }
 
     }

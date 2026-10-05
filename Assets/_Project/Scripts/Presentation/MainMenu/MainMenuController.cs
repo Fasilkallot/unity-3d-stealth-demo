@@ -18,7 +18,7 @@ namespace EvidenceRun.Presentation.MainMenu
 
                 return;
             }
-
+            
             SceneManager.LoadScene(gameplaySceneName);
         }
     }

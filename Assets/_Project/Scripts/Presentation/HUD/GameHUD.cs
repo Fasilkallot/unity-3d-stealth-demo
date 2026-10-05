@@ -84,8 +84,7 @@ namespace EvidenceRun.Presentation.HUD
         {
             Scene activeScene = SceneManager.GetActiveScene();
 
-            SceneManager.LoadScene(
-                activeScene.buildIndex);
+            SceneManager.LoadScene("MainMenu");
         }
 
         private void OnGuardStateChanged(

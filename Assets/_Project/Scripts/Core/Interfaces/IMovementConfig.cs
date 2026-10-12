@@ -7,5 +7,6 @@ namespace EvidenceRun.Core
         float Deceleration { get; }
         float CrouchSpeedMultiplier { get; }
         float RunSpeedMultiplier { get; }
+        float JumpForce { get; }
     }
 }

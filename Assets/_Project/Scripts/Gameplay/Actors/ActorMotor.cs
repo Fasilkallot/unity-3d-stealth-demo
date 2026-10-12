@@ -6,9 +6,19 @@ namespace EvidenceRun.Gameplay.Actors
     [RequireComponent(typeof(Rigidbody))]
     public sealed class ActorMotor : MonoBehaviour
     {
+        [Header("Ground Check")]
+        [SerializeField] private LayerMask groundLayers = ~0;
+        [SerializeField] private float groundCheckRadius = 0.25f;
+        [SerializeField] private float groundCheckOffset = 0.15f;
+        [SerializeField] private float groundCheckDistance = 0.2f;
+
         private IMovementConfig _movementConfig;
         private Rigidbody _rigidbody;
         private ActorIntent _intent;
+        private bool _isGrounded;
+        private bool _jumpRequested;
+
+        public bool IsGrounded => _isGrounded;
 
         private void Awake()
         {
@@ -34,6 +44,11 @@ namespace EvidenceRun.Gameplay.Actors
         public void SetIntent(in ActorIntent intent)
         {
             _intent = intent;
+
+            if (intent.Jump)
+            {
+                _jumpRequested = true;
+            }
         }
 
         private void FixedUpdate()
@@ -43,8 +58,45 @@ namespace EvidenceRun.Gameplay.Actors
                 return;
             }
 
+            CheckGround();
             Move();
+            Jump();
             Rotate();
+        }
+
+        private void CheckGround()
+        {
+            Vector3 origin = transform.position + Vector3.up * groundCheckOffset;
+
+            _isGrounded = Physics.SphereCast(
+                origin,
+                groundCheckRadius,
+                Vector3.down,
+                out _,
+                groundCheckDistance,
+                groundLayers,
+                QueryTriggerInteraction.Ignore);
+        }
+
+        private void Jump()
+        {
+            if (!_jumpRequested)
+            {
+                return;
+            }
+
+            _jumpRequested = false;
+
+            if (!_isGrounded || _intent.Crouch)
+            {
+                return;
+            }
+
+            Vector3 velocity = _rigidbody.linearVelocity;
+            velocity.y = _movementConfig.JumpForce;
+            _rigidbody.linearVelocity = velocity;
+
+            _isGrounded = false;
         }
 
         private void Move()
@@ -73,7 +125,6 @@ namespace EvidenceRun.Gameplay.Actors
             }
 
             Vector3 targetVelocity = desiredDirection * speed;
-
             Vector3 currentVelocity = _rigidbody.linearVelocity;
 
             Vector3 currentHorizontalVelocity = new Vector3(
@@ -135,6 +186,14 @@ namespace EvidenceRun.Gameplay.Actors
 
             _rigidbody.linearVelocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
+            _jumpRequested = false;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = _isGrounded ? Color.green : Color.red;
+            Vector3 origin = transform.position + Vector3.up * groundCheckOffset;
+            Gizmos.DrawWireSphere(origin + Vector3.down * groundCheckDistance, groundCheckRadius);
         }
     }
 }

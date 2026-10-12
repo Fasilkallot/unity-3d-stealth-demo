@@ -23,6 +23,11 @@ namespace EvidenceRun.Gameplay.Player
         [SerializeField, Min(1f)]
         private float runSpeedMultiplier = 1.5f;
 
+        [Header("Jump")]
+        [Min(0f)]
+        [SerializeField] private float jumpForce = 7f;
+
+        public float JumpForce => jumpForce;
         public float RunSpeedMultiplier => runSpeedMultiplier;
         public float MoveSpeed => moveSpeed;
         public float Acceleration => acceleration;

@@ -53,6 +53,10 @@ namespace EvidenceRun.Gameplay.Guards
         [SerializeField, Min(0f)]
         private float chaseLoseSightDuration = 3f;
 
+        [Header("Jump")]
+[Min(0f)]
+[SerializeField] private float jumpForce = 7f;
+
         [SerializeField, Min(0f)]
         private float catchRadius = 1.25f;
 
@@ -69,6 +73,7 @@ namespace EvidenceRun.Gameplay.Guards
         public float Deceleration => deceleration;
         public float CrouchSpeedMultiplier => crouchSpeedMultiplier;
         public float RunSpeedMultiplier => 1f;
+        public float JumpForce => 0f; 
 
         public float VisionRange => visionRange;
         public float FieldOfView => fieldOfView;

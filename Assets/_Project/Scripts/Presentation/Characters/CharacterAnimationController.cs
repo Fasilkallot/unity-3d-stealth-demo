@@ -1,4 +1,5 @@
 using EvidenceRun.Core;
+using EvidenceRun.Gameplay.Actors;
 using EvidenceRun.Gameplay.Player;
 using UnityEngine;
 
@@ -8,15 +9,19 @@ namespace EvidenceRun.Presentation.Characters
     {
         [Header("References")]
         [SerializeField] private PlayerInputReader inputReader;
+        [SerializeField] private ActorMotor actorMotor;
         [SerializeField] private Animator animator;
 
         private static readonly int SpeedHash = Animator.StringToHash("Speed");
         private static readonly int CrouchHash = Animator.StringToHash("Crouch");
         private static readonly int ActionHash = Animator.StringToHash("Action");
+        private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
 
         private float _lastSpeed = -1f;
         private bool _lastCrouch;
         private bool _lastThrow;
+        private bool _lastGrounded = true;
 
         private void Awake()
         {
@@ -37,6 +42,16 @@ namespace EvidenceRun.Presentation.Characters
                     this);
 
                 enabled = false;
+                return;
+            }
+
+            if (actorMotor == null)
+            {
+                Debug.LogError(
+                    $"{nameof(CharacterAnimationController)} requires an {nameof(ActorMotor)}.",
+                    this);
+
+                enabled = false;
             }
         }
 
@@ -47,12 +62,12 @@ namespace EvidenceRun.Presentation.Characters
             UpdateLocomotion(intent);
             UpdateCrouch(intent);
             UpdateAction(intent);
+            UpdateJump(intent);
         }
 
         private void UpdateLocomotion(in ActorIntent intent)
         {
             float movementMagnitude = intent.Move.magnitude;
-
             float speed = 0f;
 
             if (movementMagnitude > 0.01f)
@@ -91,6 +106,22 @@ namespace EvidenceRun.Presentation.Characters
             }
 
             _lastThrow = intent.Throw;
+        }
+
+        private void UpdateJump(in ActorIntent intent)
+        {
+            bool isGrounded = actorMotor.IsGrounded;
+
+            if (isGrounded != _lastGrounded)
+            {
+                animator.SetBool(IsGroundedHash, isGrounded);
+                _lastGrounded = isGrounded;
+            }
+
+            if (intent.Jump && isGrounded && !intent.Crouch)
+            {
+                animator.SetTrigger(JumpHash);
+            }
         }
     }
 }

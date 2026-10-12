@@ -30,6 +30,7 @@ namespace EvidenceRun.Gameplay.Player
             ReadRun();
             ReadAim();
             ReadThrow();
+            ReadJump();
         }
 
         private void ReadThrow()
@@ -95,5 +96,11 @@ namespace EvidenceRun.Gameplay.Player
             _intent.AimPoint =
                 transform.position + aimDirection * 100f;
         }
+
+        private void ReadJump()
+        {
+            _intent.Jump = Input.GetKeyDown(KeyCode.Space);
+        }
+
     }
 }

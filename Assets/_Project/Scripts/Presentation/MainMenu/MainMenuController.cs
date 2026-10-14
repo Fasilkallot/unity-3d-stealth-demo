@@ -8,6 +8,11 @@ namespace EvidenceRun.Presentation.MainMenu
         [Header("Scene")]
         [SerializeField] private string gameplaySceneName = "EvidenceRun";
 
+        private void Awake()
+        {
+            ShowCursor();
+        }
+
         public void StartMission()
         {
             if (string.IsNullOrWhiteSpace(gameplaySceneName))
@@ -19,7 +24,14 @@ namespace EvidenceRun.Presentation.MainMenu
                 return;
             }
             
+            ShowCursor();
             SceneManager.LoadScene(gameplaySceneName);
+        }
+
+        private static void ShowCursor()
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
     }
 }

@@ -1345,17 +1345,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5197353328299795526, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
   m_PrefabInstance: {fileID: 3716370700481188123}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &623360034 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1255997931972251418, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
-  m_PrefabInstance: {fileID: 3716370700481188123}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ea0003426b94d742bf546d826c32090, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: EvidenceRun.Gameplay::EvidenceRun.Gameplay.Player.PlayerInputReader
 --- !u!114 &623360037 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4059480184613704763, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
@@ -1469,11 +1458,6 @@ Transform:
   - {fileID: 46884158}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &714136790 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 90100078918636522, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
-  m_PrefabInstance: {fileID: 3716370700481188123}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &766160359
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1673,9 +1657,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EvidenceRun.Presentation::EvidenceRun.Presentation.HUD.GameHUD
   objectiveText: {fileID: 336625061}
+  objectiveLabel: {fileID: 0}
+  gameplayHud: {fileID: 0}
   winPanel: {fileID: 1794404780}
   losePanel: {fileID: 1166950026}
   alertIndicator: {fileID: 802247687}
+  alertText: {fileID: 0}
+  alertAccent: {fileID: 0}
+  suspiciousColor: {r: 0.76862746, g: 0.60784316, b: 0.33333334, a: 1}
+  chaseColor: {r: 0.7176471, g: 0.41568628, b: 0.36078432, a: 1}
+  evidenceFeedback: {fileID: 0}
+  evidenceFeedbackText: {fileID: 0}
+  feedbackDurationSeconds: 4
+  mainMenuSceneName: MainMenu
 --- !u!1 &846936723
 GameObject:
   m_ObjectHideFlags: 0
@@ -3506,25 +3500,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2130336776 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 940383810312809589, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
-  m_PrefabInstance: {fileID: 3716370700481188123}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &2130336779
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2130336776}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c18b3b07abefc54cb5bd14bf63ac7bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: EvidenceRun.Presentation::EvidenceRun.Presentation.Characters.CharacterAnimationController
-  inputReader: {fileID: 623360034}
-  animator: {fileID: 714136790}
 --- !u!1001 &2134939170
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3662,10 +3637,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 940383810312809589, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2130336779}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
 --- !u!1001 &7819636285133240792
 PrefabInstance:

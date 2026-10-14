@@ -1,3 +1,4 @@
+using System;
 using EvidenceRun.Core;
 using UnityEngine;
 
@@ -19,6 +20,10 @@ namespace EvidenceRun.Gameplay.Actors
         private bool _jumpRequested;
 
         public bool IsGrounded => _isGrounded;
+        public ActorIntent CurrentIntent => _intent;
+
+        // Presentation observes an accepted jump; input alone cannot confirm takeoff.
+        public event Action Jumped;
 
         private void Awake()
         {
@@ -68,7 +73,9 @@ namespace EvidenceRun.Gameplay.Actors
         {
             Vector3 origin = transform.position + Vector3.up * groundCheckOffset;
 
-            _isGrounded = Physics.SphereCast(
+            // The probe can still touch the floor on the first rising physics steps.
+            // Do not report a landing (or permit a second jump) during ascent.
+            _isGrounded = _rigidbody.linearVelocity.y <= 0.1f && Physics.SphereCast(
                 origin,
                 groundCheckRadius,
                 Vector3.down,
@@ -97,6 +104,7 @@ namespace EvidenceRun.Gameplay.Actors
             _rigidbody.linearVelocity = velocity;
 
             _isGrounded = false;
+            Jumped?.Invoke();
         }
 
         private void Move()
@@ -179,6 +187,9 @@ namespace EvidenceRun.Gameplay.Actors
 
         public void Stop()
         {
+            _intent = default;
+            _jumpRequested = false;
+
             if (_rigidbody == null)
             {
                 return;
@@ -186,7 +197,6 @@ namespace EvidenceRun.Gameplay.Actors
 
             _rigidbody.linearVelocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
-            _jumpRequested = false;
         }
 
         private void OnDrawGizmosSelected()

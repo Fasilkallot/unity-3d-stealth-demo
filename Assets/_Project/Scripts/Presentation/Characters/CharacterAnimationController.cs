@@ -1,6 +1,5 @@
 using EvidenceRun.Core;
 using EvidenceRun.Gameplay.Actors;
-using EvidenceRun.Gameplay.Player;
 using UnityEngine;
 
 namespace EvidenceRun.Presentation.Characters
@@ -8,7 +7,6 @@ namespace EvidenceRun.Presentation.Characters
     public sealed class CharacterAnimationController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private PlayerInputReader inputReader;
         [SerializeField] private ActorMotor actorMotor;
         [SerializeField] private Animator animator;
 
@@ -18,51 +16,74 @@ namespace EvidenceRun.Presentation.Characters
         private static readonly int JumpHash = Animator.StringToHash("Jump");
         private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
 
-        private float _lastSpeed = -1f;
+        private float _lastSpeed;
         private bool _lastCrouch;
         private bool _lastThrow;
-        private bool _lastGrounded = true;
+        private bool _lastGrounded;
+        private bool _forceSync;
+        private bool _isValid;
 
         private void Awake()
         {
-            if (inputReader == null)
+            if (actorMotor == null)
             {
-                Debug.LogError(
-                    $"{nameof(CharacterAnimationController)} requires a {nameof(PlayerInputReader)}.",
-                    this);
-
-                enabled = false;
+                DisableWithError($"requires an assigned {nameof(ActorMotor)}");
                 return;
             }
 
             if (animator == null)
             {
-                Debug.LogError(
-                    $"{nameof(CharacterAnimationController)} requires an Animator.",
-                    this);
-
-                enabled = false;
+                DisableWithError("requires an assigned Animator");
                 return;
             }
 
-            if (actorMotor == null)
+            if (animator.runtimeAnimatorController == null)
             {
-                Debug.LogError(
-                    $"{nameof(CharacterAnimationController)} requires an {nameof(ActorMotor)}.",
-                    this);
+                DisableWithError("requires a Runtime Animator Controller on the assigned Animator");
+                return;
+            }
 
-                enabled = false;
+            AnimatorControllerParameter[] parameters = animator.parameters;
+            _isValid =
+                ValidateParameter(parameters, SpeedHash, "Speed", AnimatorControllerParameterType.Float) &&
+                ValidateParameter(parameters, CrouchHash, "Crouch", AnimatorControllerParameterType.Bool) &&
+                ValidateParameter(parameters, ActionHash, "Action", AnimatorControllerParameterType.Trigger) &&
+                ValidateParameter(parameters, JumpHash, "Jump", AnimatorControllerParameterType.Trigger) &&
+                ValidateParameter(parameters, IsGroundedHash, "IsGrounded", AnimatorControllerParameterType.Bool);
+        }
+
+        private void OnEnable()
+        {
+            if (!_isValid)
+            {
+                return;
+            }
+
+            actorMotor.Jumped += OnJumped;
+            _forceSync = true;
+            _lastThrow = false;
+            animator.ResetTrigger(JumpHash);
+            animator.ResetTrigger(ActionHash);
+        }
+
+        private void OnDisable()
+        {
+            if (actorMotor != null)
+            {
+                actorMotor.Jumped -= OnJumped;
             }
         }
 
         private void Update()
         {
-            ActorIntent intent = inputReader.Intent;
+            // Use the intent submitted by PlayerController after its session-state check.
+            ActorIntent intent = actorMotor.CurrentIntent;
 
             UpdateLocomotion(intent);
             UpdateCrouch(intent);
             UpdateAction(intent);
-            UpdateJump(intent);
+            UpdateGrounded();
+            _forceSync = false;
         }
 
         private void UpdateLocomotion(in ActorIntent intent)
@@ -80,7 +101,7 @@ namespace EvidenceRun.Presentation.Characters
                 }
             }
 
-            if (!Mathf.Approximately(speed, _lastSpeed))
+            if (_forceSync || !Mathf.Approximately(speed, _lastSpeed))
             {
                 animator.SetFloat(SpeedHash, speed);
                 _lastSpeed = speed;
@@ -89,7 +110,7 @@ namespace EvidenceRun.Presentation.Characters
 
         private void UpdateCrouch(in ActorIntent intent)
         {
-            if (intent.Crouch == _lastCrouch)
+            if (!_forceSync && intent.Crouch == _lastCrouch)
             {
                 return;
             }
@@ -100,7 +121,7 @@ namespace EvidenceRun.Presentation.Characters
 
         private void UpdateAction(in ActorIntent intent)
         {
-            if (intent.Throw && !_lastThrow)
+            if (intent.Throw && !_lastThrow && actorMotor.IsGrounded)
             {
                 animator.SetTrigger(ActionHash);
             }
@@ -108,20 +129,48 @@ namespace EvidenceRun.Presentation.Characters
             _lastThrow = intent.Throw;
         }
 
-        private void UpdateJump(in ActorIntent intent)
+        private void UpdateGrounded()
         {
             bool isGrounded = actorMotor.IsGrounded;
 
-            if (isGrounded != _lastGrounded)
+            if (_forceSync || isGrounded != _lastGrounded)
             {
                 animator.SetBool(IsGroundedHash, isGrounded);
                 _lastGrounded = isGrounded;
             }
+        }
 
-            if (intent.Jump && isGrounded && !intent.Crouch)
+        private void OnJumped()
+        {
+            // Jump takes priority over a pending full-body throw.
+            animator.ResetTrigger(ActionHash);
+            animator.SetBool(IsGroundedHash, false);
+            _lastGrounded = false;
+            animator.SetTrigger(JumpHash);
+        }
+
+        private bool ValidateParameter(
+            AnimatorControllerParameter[] parameters,
+            int hash,
+            string parameterName,
+            AnimatorControllerParameterType type)
+        {
+            for (int i = 0; i < parameters.Length; i++)
             {
-                animator.SetTrigger(JumpHash);
+                if (parameters[i].nameHash == hash && parameters[i].type == type)
+                {
+                    return true;
+                }
             }
+
+            DisableWithError($"requires Animator parameter '{parameterName}' of type {type}");
+            return false;
+        }
+
+        private void DisableWithError(string reason)
+        {
+            Debug.LogError($"{nameof(CharacterAnimationController)} {reason}. Animation driver disabled.", this);
+            enabled = false;
         }
     }
 }

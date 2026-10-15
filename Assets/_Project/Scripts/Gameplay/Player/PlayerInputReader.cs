@@ -8,8 +8,13 @@ namespace EvidenceRun.Gameplay.Player
         [Header("References")]
         [SerializeField] private Camera playerCamera;
 
+        private ICameraInputOrientation _cameraOrientation;
         private ActorIntent _intent;
         public ActorIntent Intent => _intent;
+
+        private Quaternion InputRotation => _cameraOrientation != null
+            ? _cameraOrientation.InputRotation
+            : playerCamera.transform.rotation;
 
         private void Awake()
         {
@@ -20,12 +25,15 @@ namespace EvidenceRun.Gameplay.Player
                     this);
 
                 enabled = false;
+                return;
             }
+
+            _cameraOrientation = playerCamera.GetComponent<ICameraInputOrientation>();
         }
 
         private void Update()
         {
-            ReadMovement();
+            ReadMovement(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")));
             ReadCrouch();
             ReadRun();
             ReadAim();
@@ -38,16 +46,13 @@ namespace EvidenceRun.Gameplay.Player
             _intent.Throw = Input.GetKeyDown(KeyCode.G);
         }
 
-        private void ReadMovement()
+        private void ReadMovement(Vector2 input)
         {
-            Vector2 input = new Vector2(
-                Input.GetAxisRaw("Horizontal"),
-                Input.GetAxisRaw("Vertical"));
-
             input = Vector2.ClampMagnitude(input, 1f);
 
-            Vector3 cameraForward = playerCamera.transform.forward;
-            Vector3 cameraRight = playerCamera.transform.right;
+            Quaternion orientation = InputRotation;
+            Vector3 cameraForward = orientation * Vector3.forward;
+            Vector3 cameraRight = orientation * Vector3.right;
 
             // Ignore camera pitch.
             cameraForward.y = 0f;
@@ -83,7 +88,7 @@ namespace EvidenceRun.Gameplay.Player
 
         private void ReadAim()
         {
-            Vector3 aimDirection = playerCamera.transform.forward;
+            Vector3 aimDirection = InputRotation * Vector3.forward;
             aimDirection.y = 0f;
 
             if (aimDirection.sqrMagnitude < 0.0001f)

@@ -9,6 +9,8 @@ namespace EvidenceRun.Bootstrap
 {
     public sealed class GameLoop : MonoBehaviour
     {
+        [SerializeField] private LayerMask projectileHitLayers = Physics.AllLayers;
+
         private GuardSystem _guardSystem;
         private ProjectileSystem _projectileSystem;
         private ImpactEffectSystem _impactEffectSystem;
@@ -38,7 +40,7 @@ namespace EvidenceRun.Bootstrap
 
             _projectileSystem?.Tick(
                 Time.deltaTime,
-                Physics.AllLayers);
+                projectileHitLayers);
 
             if (_objectiveSystem != null && _playerTransform != null)
             {

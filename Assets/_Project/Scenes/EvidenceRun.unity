@@ -2593,7 +2593,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.1
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -2621,13 +2621,18 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1531523168}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.1305262, y: 0, z: 0, w: 0.9914449}
+  m_LocalPosition: {x: 0, y: 2.8146858, z: -4.3466663}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 15, y: 0, z: 0}
+--- !u!4 &1857137246 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8379039412381995322, guid: fd4afc3ed4959f842895f7a7ad6e91f0, type: 3}
+  m_PrefabInstance: {fileID: 3716370700481188123}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1531523172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2640,15 +2645,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08db6f6bc3229be4d8d2e8dc21517074, type: 3}
   m_Name: 
   m_EditorClassIdentifier: EvidenceRun.Presentation::EvidenceRun.Presentation.Camera.ThirdPersonCamera
-  target: {fileID: 623360033}
-  distance: 5
-  height: 2
-  mouseSensitivity: 3
-  minPitch: -20
-  maxPitch: 60
-  positionSmoothTime: 0.08
-  rotationSmoothSpeed: 12
-  playerAlignmentSpeed: 10
+  target: {fileID: 1857137246}
+  ignoreRoot: {fileID: 623360033}
+  cameraComponent: {fileID: 1531523170}
+  settings: {fileID: 11400000, guid: b4a76b6b115a4345aca2c2a5c0852138, type: 2}
 --- !u!1001 &1654995072
 PrefabInstance:
   m_ObjectHideFlags: 0

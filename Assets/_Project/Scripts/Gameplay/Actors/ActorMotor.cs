@@ -180,9 +180,8 @@ namespace EvidenceRun.Gameplay.Actors
             _rigidbody.collisionDetectionMode =
                 CollisionDetectionMode.Continuous;
 
-            _rigidbody.constraints =
-                RigidbodyConstraints.FreezeRotationX |
-                RigidbodyConstraints.FreezeRotationZ;
+            // Facing belongs to MoveRotation; collision torque must not compete with it.
+            _rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
         }
 
         public void Stop()

@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d52b1b52776469b81ac7bcbac678e7c, type: 3}
+  m_Name: DefaultThirdPersonCamera
+  m_EditorClassIdentifier: EvidenceRun.Presentation::EvidenceRun.Presentation.Camera.ThirdPersonCameraConfig
+  targetOffset: {x: 0, y: 0, z: 0}
+  distance: 4.5
+  initialPitch: 15
+  sensitivityX: 3
+  sensitivityY: 3
+  minPitch: -25
+  maxPitch: 65
+  pivotResponse: 25
+  orbitResponse: 35
+  distanceRestoreResponse: 8
+  reframingResponse: 6
+  reframingAngularSpeed: 300
+  teleportDistance: 8
+  collisionLayers:
+    serializedVersion: 2
+    m_Bits: 265
+  collisionRadius: 0.25
+  surfaceOffset: 0.03
+  playerClearanceCenter: {x: 0, y: 0.15, z: 0.15}
+  playerClearanceRadius: 1.2
+  playerClearanceHeight: 3.8
